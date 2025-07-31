@@ -38,7 +38,7 @@
 │ Spring Boot 3.2                    │
 │ Spring MVC + Thymeleaf             │
 │ Embedded Tomcat                     │
-│ Java 17 + GraalVM                  │
+│ Java 21 + GraalVM                  │
 │ Executable JAR/Native Binary       │
 └─────────────────────────────────────┘
 ```
@@ -52,7 +52,7 @@
 - ✅ **WAR → JAR/Native**: パッケージング方式の最適化
 
 ### 2. **Java プラットフォーム更新**
-- ✅ **Java 8 → Java 17**: 最新LTS版への移行
+- ✅ **Java 8 → Java 21**: 最新LTS版への移行
 - ✅ **Oracle JDK → GraalVM**: ネイティブコンパイル対応
 - ✅ **JVM実行 → ネイティブバイナリ**: 起動時間とメモリ使用量の劇的改善
 
@@ -175,7 +175,7 @@ podman build -f Dockerfile.jvm -t legacy-appmod-graalvm:jvm .
 - **CI/CD対応**: Maven プロファイルによる環境分離
 
 ### 3. **技術的負債解消**
-- **セキュリティ**: Java 17 + 最新フレームワークによる脆弱性対策
+- **セキュリティ**: Java 21 + 最新フレームワークによる脆弱性対策
 - **保守性**: モダンなアーキテクチャによる拡張性確保
 - **スキル**: 最新技術スタックによる開発者体験向上
 
@@ -223,5 +223,5 @@ podman build -f Dockerfile.jvm -t legacy-appmod-graalvm:jvm .
 ---
 
 *プロジェクト完了日: 2025年7月31日*  
-*技術スタック: Java 17 + GraalVM + Spring Boot 3.2 + Maven*  
+*技術スタック: Java 21 + GraalVM + Spring Boot 3.2 + Maven*  
 *デプロイ対象: Cloud Run, Kubernetes, Docker等のコンテナ環境*

@@ -16,7 +16,7 @@
 - **Struts2 → Spring Boot 3.2**: 現代的なJavaフレームワークへの移行
 - **JSP → Thymeleaf**: サーバーサイドテンプレートエンジンの更新
 - **WAR → JAR**: 実行可能JARファイルによる簡単なデプロイメント
-- **Java 8 → Java 17**: 最新のLTSバージョンへのアップグレード
+- **Java 8 → Java 21**: 最新のLTSバージョンへのアップグレード
 
 ### ⚡ GraalVM Native Imageサポート
 - **高速起動**: 従来のJVMと比較して大幅な起動時間短縮
@@ -82,9 +82,9 @@
 ## 開発環境のセットアップ
 
 ### 必要な環境
-- **Java 17以上** (GraalVM推奨)
+- **Java 21以上** (GraalVM推奨)
 - **Maven 3.6以上**
-- **GraalVM 17** (Native Image作成時)
+- **GraalVM 21** (Native Image作成時)
 - **8GB以上のRAM** (Native Imageビルド時)
 
 ### 依存関係のインストール
@@ -121,9 +121,9 @@ GraalVMとnative-imageツールがインストールされている必要があ�
 curl -s "https://get.sdkman.io" | bash
 source ~/.sdkman/bin/sdkman-init.sh
 
-# GraalVM CE 17のインストール
-sdk install java 17.0.9-graalce
-sdk use java 17.0.9-graalce
+# GraalVM CE 21のインストール
+sdk install java 21.0.2-graalce
+sdk use java 21.0.2-graalce
 
 # インストール確認
 java -version
@@ -131,14 +131,14 @@ java -version
 
 **代替方法: Homebrew (macOS)**
 ```bash
-brew install --cask graalvm/tap/graalvm-jdk17
+brew install --cask graalvm/tap/graalvm-jdk21
 ```
 
 #### Native Imageの作成と実行
 ```bash
 # GraalVM環境の確認
 source ~/.sdkman/bin/sdkman-init.sh
-java -version  # GraalVM CE 17.0.9+9.1が表示されることを確認
+java -version  # GraalVM CE 21.0.2+13.1が表示されることを確認
 
 # Native Imageの作成（約3-4分）
 export MAVEN_OPTS="-Xmx2g -XX:MaxMetaspaceSize=512m"
@@ -329,7 +329,7 @@ podman machine set --memory 12288  # 12GB
 **症状**: `GLIBC_2.32' not found`
 ```dockerfile
 # 解決策: ビルドとランタイムで同じベースイメージを使用
-FROM ghcr.io/graalvm/graalvm-community:17  # 両ステージで統一
+FROM ghcr.io/graalvm/graalvm-community:21  # 両ステージで統一
 ```
 
 #### 4. **共有ライブラリ不足エラー**
@@ -344,7 +344,7 @@ RUN microdnf install -y ca-certificates && microdnf clean all
 #### GraalVM環境確認
 ```bash
 # 正しいGraalVMが使用されているか確認
-java -version  # GraalVM CE 17.0.9+9.1が表示されること
+java -version  # GraalVM CE 21.0.2+13.1が表示されること
 echo $JAVA_HOME  # GraalVMのパスが設定されていること
 ```
 

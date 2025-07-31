@@ -1,8 +1,8 @@
 # Multi-stage Dockerfile for GraalVM Native Image
-FROM ghcr.io/graalvm/graalvm-community:17 AS builder
+FROM ghcr.io/graalvm/graalvm-community:21 AS builder
 
-# Install native-image
-RUN gu install native-image
+# Check if native-image is already installed, if not install it
+RUN native-image --version || gu install native-image
 
 # Set working directory
 WORKDIR /app
@@ -30,7 +30,7 @@ RUN mvn dependency:go-offline -B
 RUN mvn clean package -Pnative -DskipTests
 
 # Runtime stage - use same base as builder to ensure GLIBC compatibility
-FROM ghcr.io/graalvm/graalvm-community:17
+FROM ghcr.io/graalvm/graalvm-community:21
 
 # Install minimal runtime dependencies and create non-root user
 RUN microdnf install -y ca-certificates && \

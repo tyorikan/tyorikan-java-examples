@@ -155,9 +155,9 @@ mvn clean package -Pnative -DskipTests -Dmaven.test.skip=true
 **解決策**:
 ```dockerfile
 # Dockerfileでビルドとランタイムで同じベースイメージを使用
-FROM ghcr.io/graalvm/graalvm-community:17 AS builder
+FROM ghcr.io/graalvm/graalvm-community:21 AS builder
 # ...
-FROM ghcr.io/graalvm/graalvm-community:17  # ランタイムも同じイメージ
+FROM ghcr.io/graalvm/graalvm-community:21  # ランタイムも同じイメージ
 ```
 
 #### 2. 共有ライブラリ不足エラー

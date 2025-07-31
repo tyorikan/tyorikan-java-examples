@@ -14,7 +14,7 @@
     <name>legacy-appmod-graalvm</name>
     <description>Modernized Spring Boot application with GraalVM native image support</description>
     <properties>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <spring-native.version>0.12.2</spring-native.version>
     </properties>
     <dependencies>
