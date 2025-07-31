@@ -1,0 +1,39 @@
+server:
+  port: 8080
+  shutdown: graceful
+
+spring:
+  application:
+    name: legacy-appmod-graalvm
+  thymeleaf:
+    cache: false
+    mode: HTML
+    encoding: UTF-8
+  web:
+    resources:
+      cache:
+        period: 0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.example: INFO
+    org.springframework: WARN
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# GraalVM Native Image specific configurations
+graalvm:
+  native:
+    resources:
+      includes:
+        - "templates/**"
+        - "static/**"

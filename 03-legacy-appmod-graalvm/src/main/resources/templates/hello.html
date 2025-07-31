@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello Result - Spring Boot with GraalVM</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .greeting {
+            font-size: 2.5em;
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+        .detailed-message {
+            font-size: 1.2em;
+            color: #718096;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .back-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: transform 0.2s;
+            margin: 10px;
+        }
+        .back-link:hover {
+            transform: translateY(-2px);
+            text-decoration: none;
+            color: white;
+        }
+        .api-info {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 30px;
+            border-left: 4px solid #667eea;
+            text-align: left;
+        }
+        .json-example {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin-top: 10px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="greeting" th:text="${message}">Hello, World!</div>
+        
+        <div class="detailed-message" th:text="${detailedMessage}">
+            Welcome to the modernized Spring Boot application!
+        </div>
+        
+        <div>
+            <a href="/" class="back-link">🏠 Back to Home</a>
+            <a th:href="@{/api/hello(name=${name})}" class="back-link">📡 View as JSON</a>
+        </div>
+        
+        <div class="api-info">
+            <h3>🔧 API Response Example</h3>
+            <p>The same data is available via REST API:</p>
+            <div class="json-example">
+{
+  "message": "<span th:text="${message}">Hello, World!</span>",
+  "detailedMessage": "<span th:text="${detailedMessage}">Welcome message</span>",
+  "name": "<span th:text="${name ?: 'null'}">null</span>"
+}
+            </div>
+            <p style="margin-top: 15px;">
+                <strong>Endpoint:</strong> 
+                <code th:text="@{/api/hello(name=${name})}">/api/hello</code>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

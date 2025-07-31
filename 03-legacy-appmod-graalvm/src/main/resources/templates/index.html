@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legacy App Modernized - Spring Boot with GraalVM</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #4a5568;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .info {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 30px;
+            border-left: 4px solid #667eea;
+        }
+        .api-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: #667eea;
+            text-decoration: none;
+        }
+        .api-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Modernized Legacy Application</h1>
+        <p style="text-align: center; color: #718096; margin-bottom: 30px;">
+            Spring Boot + GraalVM Native Image Ready
+        </p>
+        
+        <form action="/hello" method="post">
+            <div class="form-group">
+                <label for="name">Enter your name:</label>
+                <input type="text" id="name" name="name" placeholder="Your name here..." />
+            </div>
+            <button type="submit">Say Hello!</button>
+        </form>
+        
+        <div class="info">
+            <h3>🔧 Application Features</h3>
+            <ul>
+                <li><strong>Spring Boot 3.2</strong> - Modern Java framework</li>
+                <li><strong>GraalVM Native Image</strong> - Fast startup & low memory</li>
+                <li><strong>Thymeleaf Templates</strong> - Server-side rendering</li>
+                <li><strong>REST API</strong> - JSON endpoints available</li>
+                <li><strong>Cloud Ready</strong> - Optimized for serverless deployment</li>
+            </ul>
+            
+            <p><strong>Try the REST API:</strong></p>
+            <a href="/api/hello" class="api-link">GET /api/hello</a><br>
+            <a href="/api/hello?name=World" class="api-link">GET /api/hello?name=World</a>
+        </div>
+    </div>
+</body>
+</html>
