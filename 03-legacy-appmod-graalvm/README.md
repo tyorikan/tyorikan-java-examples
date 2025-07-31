@@ -358,20 +358,93 @@ SERVER_PORT=9090 ./target/legacy-appmod-graalvm
 
 ## 開発のベストプラクティス
 
-### 1. Native Image対応のコーディング
-- リフレクションの使用を避ける
-- 動的プロキシの制限を理解する
-- AOT（Ahead-of-Time）コンパイルを考慮した設計
+GraalVM Native Imageは、従来のJVMとは異なる実行モデルを持つため、開発時にはいくつかのベストプラクティスに従うことが重要です。
 
-### 2. テスト戦略
-- 単体テスト、インテグレーションテスト、E2Eテストの組み合わせ
-- Native Imageでのテスト実行
-- パフォーマンステストの実施
+### 1. Native Imageフレンドリーなコーディング
 
-### 3. 監視とログ
-- Spring Boot Actuatorの活用
-- 構造化ログの出力
-- メトリクスの収集
+Native Imageは、AOT（事前）コンパイルによってアプリケーションのクラスパスを静的に分析します。そのため、実行時に動的な操作を行うコードは、そのままでは動作しない可能性があります。
+
+- **リフレクションの最小化と明示的なヒント**:
+  - Spring Boot 3は多くのリフレクションを自動で処理しますが、独自のカスタムリフレクションは避けるべきです。
+  - どうしても必要な場合は、`@RegisterReflectionForBinding`や`RuntimeHints` APIを使用して、コンパイル時に必要なクラス情報をGraalVMに提供します。
+  - **例（アノテーション）**:
+    ```java
+    // MyClassをリフレクション対象として登録
+    @RegisterReflectionForBinding(MyClass.class)
+    ```
+  - **例（プログラム）**:
+    ```java
+    // RuntimeHintsRegistrarを実装してプログラムでヒントを登録
+    public class MyRuntimeHints implements RuntimeHintsRegistrar {
+        @Override
+        public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
+            // MyClassの全メンバーをリフレクション可能にする
+            hints.reflection().registerType(MyClass.class, MemberCategory.values());
+        }
+    }
+    ```
+    その後、`META-INF/spring/aot.factories`に登録します。
+
+- **動的クラスローディングの回避**:
+  - `Class.forName("com.example.MyClass")`のようなコードは、Native Imageがビルド時にクラスを検出できない原因となります。静的なクラス参照（例: `MyClass.class`）を使用してください。
+
+- **リソースへのアクセス**:
+  - クラスパス上のリソース（設定ファイル、テンプレート等）は、ビルド時にネイティブバイナリにバンドルされます。
+  - `Class.getResourceAsStream()`などでアクセスする場合、リソースパスが静的に解決可能である必要があります。動的に生成されるパスでリソースにアクセスする場合、`resource-config.json`ファイルでそのパターンを明示的に指定する必要があります。
+    ```json
+    {
+      "resources": {
+        "includes": [
+          { "pattern": "\Qmy-dynamic-config.json\E" }
+        ]
+      }
+    }
+    ```
+
+### 2. 効果的なテスト戦略
+
+Native Image環境はJVMと挙動が異なる場合があるため、両方の環境でテストを実行することが不可欠です。
+
+- **JVMでの高速なフィードバック**:
+  - 開発中は、`mvn test`を使用してJVM上で単体テストと統合テストを迅速に実行し、ビジネスロジックの正しさを素早く検証します。
+
+- **Native Imageでの互換性テスト**:
+  - CI/CDパイプラインやリリース前には、必ずNative Image環境でのテストを実行します。これにより、リフレクションやリソース関連の互換性問題を早期に発見できます。
+  - Mavenでは、`native`プロファイルを使用してネイティブテストを実行できます。
+    ```bash
+    # Native Imageをビルドし、それに対してテストを実行
+    mvn clean verify -Pnative
+    ```
+  - Spring Bootが提供する`@NativeImageTest`を利用すると、ビルドされたネイティブアプリケーションに対して直接テストを実行できます。
+
+- **パフォーマンス・ベンチマーキング**:
+  - JMH (Java Microbenchmark Harness)などのツールを使い、JVMモードとNativeモードのパフォーマンス（起動時間、メモリ使用量、スループット）を定期的に比較測定し、性能劣化を監視します。
+
+### 3. 運用を考慮した監視とロギング
+
+コンテナ化やサーバーレス環境での運用を前提とした設計が求められます。
+
+- **Spring Boot Actuatorのフル活用**:
+  - `/actuator/health`, `/actuator/info`, `/actuator/metrics`などのエンドポイントを有効化し、KubernetesのLiveness/ReadinessプローブやPrometheusなどの監視システムと連携させます。
+
+- **構造化ロギング**:
+  - ログはJSON形式などの機械可読な形式で出力します。これにより、Cloud LoggingやFluentdなどのログ集約・分析ツールでの活用が容易になります。
+  - `logstash-logback-encoder`などのライブラリを導入するか、`application.yml`でロギングパターンをカスタマイズします。
+
+- **分散トレーシング**:
+  - Micrometer TracingとOpenTelemetryなどのトレーサーを組み合わせて、マイクロサービス環境でのリクエストを追跡可能にします。これにより、パフォーマンスのボトルネック特定や障害解析が格段に容易になります。
+
+### 4. ビルドとデプロイの最適化
+
+Native Imageのビルドはリソースを消費するため、効率化が重要です。
+
+- **Reachability Metadataリポジトリの活用**:
+  - Spring Boot AOTプラグインは、[GraalVM Reachability Metadataリポジトリ](https://github.com/oracle/graalvm-reachability-metadata)を自動で利用します。これにより、多くのサードパーティライブラリが手動設定なしで動作します。
+  - ライブラリのバージョンアップ時には、対応するメタデータが存在するか確認することが推奨されます。
+
+- **マルチステージDockerビルド**:
+  - `Dockerfile`でマルチステージビルドを採用し、ビルド環境（GraalVM JDKを含む）と実行環境（軽量なDistrolessイメージなど）を分離します。
+  - これにより、最終的なDockerイメージのサイズを最小限に抑え、攻撃対象領域を減らしてセキュリティを向上させることができます。
 
 ## 今後の拡張案
 
