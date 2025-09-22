@@ -197,6 +197,7 @@ SINGER_ID=$(curl -s -X POST http://localhost:8080/api/singers -H "Content-Type: 
 
 # アルバムの作成
 ALBUM_ID=$(curl -s -X POST http://localhost:8080/api/singers/$SINGER_ID/albums -H "Content-Type: application/json" -d '{"title": "City Lights", "releaseYear": 2024}' | jq -r .albumId)
+
 # 曲の作成
 curl -X POST http://localhost:8080/api/singers/$SINGER_ID/albums/$ALBUM_ID/tracks -H "Content-Type: application/json" -d '{"trackNumber": 1, "title": "Neon Dreams"}'
 
@@ -214,10 +215,10 @@ echo "作成されたユーザーのID: $USER_ID"
 # ユーザーがアルバムを購入
 curl -s -X POST http://localhost:8080/api/orders \
 -H "Content-Type: application/json" \
--d '{ \
-  "userId": "'$USER_ID'", \
-  "singerId": "'$SINGER_ID'", \
-  "albumId": "'$ALBUM_ID'" \
+-d '{ 
+  "userId": "'$USER_ID'", 
+  "singerId": "'$SINGER_ID'", 
+  "albumId": "'$ALBUM_ID'" 
 }' | jq .
 
 # ユーザーの購入履歴を取得
