@@ -1,6 +1,5 @@
 package com.example.javacassandra.model;
 
-import com.google.cloud.spring.data.spanner.core.mapping.Column;
 import com.google.cloud.spring.data.spanner.core.mapping.PrimaryKey;
 import com.google.cloud.spring.data.spanner.core.mapping.Table;
 import java.time.Instant;
